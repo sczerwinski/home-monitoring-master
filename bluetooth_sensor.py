@@ -3,6 +3,9 @@ import json
 import rx
 from rx import operators as ops
 from rx.disposable import Disposable
+import logging
+
+log = logging.getLogger(__name__)
 
 _adapter = pygatt.GATTToolBackend()
 
@@ -10,7 +13,7 @@ _line = ''
 
 
 def _find_devices():
-    print('\nScanning...')
+    print('Scanning...')
     return _adapter.scan()
 
 
@@ -20,9 +23,9 @@ def _find_named_devices():
 
 
 def _print_devices(devices):
-    print('\nFound devices:')
+    print('Found devices:')
     for index, device in enumerate(devices):
-        print("\t%d. %s (%s)" % (index + 1, device['name'], device['address']))
+        print('\t%d. %s (%s)' % (index + 1, device['name'], device['address']))
 
 
 def _prompt_device_selection(devices):
@@ -30,13 +33,15 @@ def _prompt_device_selection(devices):
     count = len(devices)
     index = 1
     if count > 1:
-        print("\nSelect device [1-%d]: " % count, end='')
+        log.debug('Found multiple devices. Waiting for user input...')
+        print('Select device [1-%d]:' % count, end='')
         index = int(input())
+        log.debug('Selected device %s.', index)
     return devices[index - 1]
 
 
 def _connect_ble_device_by_address(address):
-    print("\nConnecting to device %s" % address)
+    log.info('Connecting to device %s', address)
     return _adapter.connect(address)
 
 
@@ -47,15 +52,16 @@ def _connect_ble_device(device):
 def _get_characteristics(ble_device):
     uuids = list(ble_device.discover_characteristics().keys())
     uuids.sort()
-    print('\nFound characteristics:')
+    print('Found characteristics:')
     for uuid in uuids:
-        print("\t* %s" % uuid)
+        print('\t* %s' % uuid)
     return uuids
 
 
 def _subscribe_characteristic(ble_device, uuid, callback=None):
-    print("\nSubscribing to characteristic %s" % uuid)
+    log.info('Subscribing to characteristic %s', uuid)
     ble_device.subscribe(uuid, callback=callback)
+    print('Subscribed to characteristic %s' % uuid)
 
 
 def _rx_callback(value, observer):
