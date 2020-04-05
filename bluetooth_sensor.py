@@ -75,6 +75,7 @@ def _rx_callback(value, observer):
 # noinspection PyUnusedLocal
 def _subscribe(observer, scheduler):
     _adapter.start()
+
     named_devices = _find_named_devices()
     device = _prompt_device_selection(devices=named_devices)
     ble_device = _connect_ble_device(device)
@@ -82,6 +83,8 @@ def _subscribe(observer, scheduler):
     _subscribe_characteristic(ble_device, uuid, callback=lambda handle, value: _rx_callback(value, observer))
 
     def dispose():
+        ble_device.unsubscribe(uuid)
+        ble_device.disconnect()
         _adapter.stop()
 
     return Disposable(dispose)
