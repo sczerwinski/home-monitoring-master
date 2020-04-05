@@ -3,6 +3,7 @@ import json
 import rx
 from rx import operators as ops
 from rx.disposable import Disposable
+from rx.scheduler import TimeoutScheduler
 import logging
 
 log = logging.getLogger(__name__)
@@ -90,7 +91,11 @@ def _subscribe(observer, scheduler):
     return Disposable(dispose)
 
 
-def observe():
+def observe(interval=None):
     return rx.create(_subscribe).pipe(
-        ops.map(lambda text: json.loads(text))
+        ops.map(lambda text: json.loads(text)),
+        ops.sample(
+            sampler=interval,
+            scheduler=TimeoutScheduler.singleton()
+        ) if interval is not None else lambda observable: observable
     )
