@@ -2,6 +2,7 @@ from adafruit_dht import DHT22
 from board import D18 as DHT_PIN
 import rx
 from rx import operators as ops
+from rx.scheduler import ThreadPoolScheduler
 import logging
 
 log = logging.getLogger(__name__)
@@ -9,6 +10,7 @@ log = logging.getLogger(__name__)
 _dhtDevice = DHT22(DHT_PIN)
 
 READING_INTERVAL = 10.0
+MAX_THREAD_COUNT = 4
 
 
 def _get_sensor_reading():
@@ -33,7 +35,10 @@ def _get_sensor_reading():
 
 
 def observe():
-    return rx.interval(READING_INTERVAL).pipe(
+    return rx.interval(
+        period=READING_INTERVAL,
+        scheduler=ThreadPoolScheduler(MAX_THREAD_COUNT)
+    ).pipe(
         ops.map(lambda value: _get_sensor_reading()),
         ops.filter(lambda value: 'error' not in value)
     )
