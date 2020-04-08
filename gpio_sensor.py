@@ -44,5 +44,6 @@ def observe(interval=None):
         ops.sample(
             sampler=interval,
             scheduler=TimeoutScheduler.singleton()
-        ) if interval is not None else lambda observable: observable
+        ) if interval is not None else lambda observable: observable,
+        ops.observe_on(scheduler=ThreadPoolScheduler(MAX_THREAD_COUNT))
     )

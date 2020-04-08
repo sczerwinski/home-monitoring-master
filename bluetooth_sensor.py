@@ -4,7 +4,7 @@ import json
 import rx
 from rx import operators as ops
 from rx.disposable import Disposable
-from rx.scheduler import TimeoutScheduler
+from rx.scheduler import ThreadPoolScheduler, TimeoutScheduler
 import logging
 
 log = logging.getLogger(__name__)
@@ -12,6 +12,8 @@ log = logging.getLogger(__name__)
 _adapter = pygatt.GATTToolBackend()
 
 _line = ''
+
+MAX_THREAD_COUNT = 4
 
 
 def _find_devices():
@@ -106,5 +108,6 @@ def observe(interval=None):
         ops.sample(
             sampler=interval,
             scheduler=TimeoutScheduler.singleton()
-        ) if interval is not None else lambda observable: observable
+        ) if interval is not None else lambda observable: observable,
+        ops.observe_on(scheduler=ThreadPoolScheduler(MAX_THREAD_COUNT))
     )
