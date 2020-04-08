@@ -1,3 +1,4 @@
+import app_config as conf
 import pygatt
 import json
 import rx
@@ -77,10 +78,18 @@ def _rx_callback(value, observer):
 def _subscribe(observer, scheduler):
     _adapter.start()
 
-    named_devices = _find_named_devices()
-    device = _prompt_device_selection(devices=named_devices)
-    ble_device = _connect_ble_device(device)
-    uuid = _get_characteristics(ble_device)[-1]
+    config_address = conf.bluetooth_address()
+
+    if config_address is None:
+        named_devices = _find_named_devices()
+        device = _prompt_device_selection(devices=named_devices)
+        ble_device = _connect_ble_device(device)
+    else:
+        ble_device = _connect_ble_device_by_address(address=config_address)
+
+    conf_uuid = conf.bluetooth_uuid()
+    uuid = conf_uuid if conf_uuid is not None else _get_characteristics(ble_device)[-1]
+
     _subscribe_characteristic(ble_device, uuid, callback=lambda handle, value: _rx_callback(value, observer))
 
     def dispose():

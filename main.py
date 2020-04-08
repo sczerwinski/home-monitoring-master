@@ -1,6 +1,7 @@
-import asyncio
 import bluetooth_sensor
 import gpio_sensor
+import app_config as conf
+import asyncio
 from rx import typing
 from rx.disposable.compositedisposable import CompositeDisposable
 import logging
@@ -11,7 +12,9 @@ logging.config.fileConfig('logging.conf')
 loop = asyncio.get_event_loop()
 loop.set_debug(True)
 
-READING_INTERVAL = 60.0
+READING_INTERVAL = conf.main_interval()
+BLUETOOTH_NAME = conf.main_bluetooth_name()
+GPIO_NAME = conf.main_gpio_name()
 
 
 class ReadingsObserver(typing.Observer):
@@ -31,8 +34,8 @@ class ReadingsObserver(typing.Observer):
 
 
 disposable = CompositeDisposable(
-    bluetooth_sensor.observe(interval=READING_INTERVAL).subscribe(ReadingsObserver('Kitchen')),
-    gpio_sensor.observe(interval=READING_INTERVAL).subscribe(ReadingsObserver('Living room'))
+    bluetooth_sensor.observe(interval=READING_INTERVAL).subscribe(ReadingsObserver(BLUETOOTH_NAME)),
+    gpio_sensor.observe(interval=READING_INTERVAL).subscribe(ReadingsObserver(GPIO_NAME))
 )
 
 print('Started.')
