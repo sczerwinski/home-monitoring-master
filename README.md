@@ -17,6 +17,8 @@ pip3 install rx
 * DHT22 humidity and temperature sensor
 * 5~10k Ohm resistor (unless using 3-pin DHT22 circuit with integrated resistor)
 
+![Breadboard](https://raw.githubusercontent.com/sczerwinski/home-monitoring-master/develop/images/home-monitoring-master.png)
+
 ## Configuration
 
 Create file `app.conf` to set up the script, e.g.:
