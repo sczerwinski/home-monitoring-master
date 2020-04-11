@@ -11,6 +11,12 @@ pip3 install requests
 pip3 install rx
 ```
 
+## Components
+
+* Raspberry Pi 3 Model B+ (any model with Bluetooth on board will be sufficient)
+* DHT22 humidity and temperature sensor
+* 5~10k Ohm resistor (unless using 3-pin DHT22 circuit with integrated resistor)
+
 ## Configuration
 
 Create file `app.conf` to set up the script, e.g.:
@@ -31,15 +37,16 @@ base_url=http://localhost/home-monitoring/api
 
 `[main]`:
 * `interval` – sensor readings interval (default `60.0`)
-* `bluetooth_name` – name of the location for the [Arduino](/sczerwinski/home-monitoring-slave)
+* `bluetooth_name` – name of the location for the [Arduino](https://github.com/sczerwinski/home-monitoring-slave)
 * `gpio_name` – name of the location for the Raspberry Pi
 
 `[bluetooth]`:
-* `address` – BLE device address used to connect to the [Arduino](/sczerwinski/home-monitoring-slave)
-* `uuid` – BLE device characteristic UUID, used by [Arduino](/sczerwinski/home-monitoring-slave) to send sensor readings
+* `address` – BLE device address used to connect to the [Arduino](https://github.com/sczerwinski/home-monitoring-slave)
+* `uuid` – BLE device characteristic UUID, used by [Arduino](https://github.com/sczerwinski/home-monitoring-slave)
+to send sensor readings
 
 `[server]`:
-* `base_url` – base URL of the [REST API](/sczerwinski/home-monitoring-server)
+* `base_url` – base URL of the [REST API](https://github.com/sczerwinski/home-monitoring-server)
 
 ## Running Application
 
@@ -126,3 +133,7 @@ To run the script automatically on system boot, execute commands:
 sudo update-rc.d home-monitoring-master defaults
 sudo update-rc.d home-monitoring-master enable
 ```
+
+## Attributions
+
+Images exported from Fritzing editor shared under [CC BY-SA 3.0 License](https://creativecommons.org/licenses/by-sa/3.0/).
